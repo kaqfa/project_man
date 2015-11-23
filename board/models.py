@@ -10,7 +10,7 @@ class Backlog(models.Model):
     data = models.TextField(null=True, blank=True)
     testing = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    label = TaggableManager()
+    # label = TaggableManager()
 
-    class Meta:
+    class MPTTMeta:
         order_insertion_by = ['component']
