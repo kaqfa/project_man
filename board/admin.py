@@ -1,4 +1,7 @@
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
+from suit.admin import SortableModelAdmin
+
 from .models import Board, Backlog
 
 
@@ -14,10 +17,23 @@ class BoardAdmin(admin.ModelAdmin):
     inlines = (BacklogInline,)
 
 
-class BacklogAdmin(admin.ModelAdmin):
+class BacklogAdmin(MPTTModelAdmin):
     list_display = ('component', 'description', 'data', 'testing', 'board', 'status')
     list_filter = ('board__title', 'status', 'component')
     search_fields = ['component']
+    mptt_level_indent = 15
+
+    def suit_row_attributes(self, obj, request):
+        class_map = {
+            'Finished': 'success',
+            'In Progress': 'warning',
+            'Not Ready': 'error',
+            'Ready to Test': 'info',
+        }
+
+        css_class = class_map.get(obj.status)
+        if css_class:
+            return {'class': css_class}
 
 
 admin.site.register(Board, BoardAdmin)
